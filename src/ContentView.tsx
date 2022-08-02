@@ -3,6 +3,7 @@ import Webcam from "react-webcam";
 import styled from "styled-components";
 import VideoPlayer from "./components/VideoPlayer";
 import WebcamWrapper from "./components/WebcamWrapper";
+import GestureInputService from "./services/GestureInputService";
 
 const StyledAppDiv = styled.div`
   display: grid;
@@ -14,13 +15,15 @@ const BBBStreamURL = "https://archive.org/serve/BigBuckBunny_328/BigBuckBunny_51
 const ContentView: React.FunctionComponent = () => {
   const webcamRef = React.createRef<Webcam>();
   const videoPlayerRef = React.createRef<VideoPlayer>();
+  const [gestureInputService, setGestureInputService] = React.useState<GestureInputService>();
 
   useEffect(() => {
-    if (webcamRef.current != null && videoPlayerRef.current != null) {
+    if (webcamRef.current?.video != null && videoPlayerRef.current != null && gestureInputService == null) {
       const videoStream = webcamRef.current.video;
       const videoPlayer = videoPlayerRef.current;
-      videoPlayer.play();
-      // TODO: Feed video stream to pose detector
+
+      const service = new GestureInputService(videoPlayer, videoStream);
+      setGestureInputService(service);
     }
   }, [webcamRef, videoPlayerRef]);
 
