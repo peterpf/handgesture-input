@@ -14,5 +14,5 @@ const ContentView: React.FunctionComponent = () => {
       <WebcamWrapper />
     </StyledAppDiv>
   );
-}
+};
 export default ContentView;
