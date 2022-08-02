@@ -8,22 +8,12 @@ const StyledDiv = styled.div`
   background-color: gray;
 `;
 
-interface Props {
-  onLoaded?: (webcam: Webcam) => void;
-}
-
-const WebcamWrapper: React.FunctionComponent<Props> = ({ onLoaded }: Props) => {
-  const webcamRef = React.useRef(null);
-  useEffect(() => {
-    if (webcamRef?.current != null && onLoaded != null) {
-      onLoaded(webcamRef.current);
-    }
-  }, [onLoaded, webcamRef]);
+const WebcamWrapper = React.forwardRef<Webcam>((props, ref) => {
   return (
     <StyledDiv>
-      <Webcam width="100%" height="100%" ref={webcamRef} />
+      <Webcam width="100%" height="100%" ref={ref} />
     </StyledDiv>
   );
-};
+});
 
 export default WebcamWrapper;
