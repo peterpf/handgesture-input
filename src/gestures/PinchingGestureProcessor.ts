@@ -1,8 +1,22 @@
-import GestureProcessor, { HandInput } from "./types";
+import Recognizer from "@/dollar/recognizer";
+import { Point } from "@/dollar/types";
+import { GestureProcessor, RecognizedGesture } from "@/types/types";
+import { Observable } from "@/utils/observable";
 
-class PinchingGestureProcessor implements GestureProcessor {
-  public handleHands(hands: HandInput[]): void {
-    throw new Error("Method not implemented.");
+const PROCESSOR_ID = "pinching_gesture_processor";
+
+class PinchingGestureProcessor extends Observable<RecognizedGesture> implements GestureProcessor {
+  private recognizer: Recognizer = new Recognizer();
+
+  public constructor() {
+    super(PROCESSOR_ID)
+  }
+
+  public onData(points: Point[]): void {
+  }
+
+  public getId() {
+    return PROCESSOR_ID;
   }
 }
 
