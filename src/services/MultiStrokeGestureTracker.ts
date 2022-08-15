@@ -58,6 +58,23 @@ class MultiStrokeGestureTracker extends Observable<Point[]> {
   }
 
   /**
+   * Interpolate the points stroke wise.
+   * @param points The points to interpolate.
+   * @param numInterpolationPoints The number of points to interpolate from the curve of a single stroke. The higher this value, the better the curve is reconstructed. Defaults to 10.
+   * @returns The stroke-wise interpolated points.
+   */
+  private interpolatePointsStrokeWise(points: Point[], numInterpolationPoints = 10) {
+    const interpolatedPoints: Point[] = []
+    const strokeIds = [...new Set(points.map(p => p.strokeId))];
+    for (let strokeId of strokeIds) {
+      const strokePoints = points.filter(p => p.strokeId === strokeId);
+      const interpolatedStrokePoints = DollarUtils.interpolateArray(strokePoints, numInterpolationPoints);
+      interpolatedPoints.push(...interpolatedStrokePoints);
+    }
+    return interpolatedPoints;
+  }
+
+  /**
    * Start a timeout to allow a brief pause between strokes.
    * If the pause is not used for starting another draw, the points are reset.
    */
@@ -69,8 +86,7 @@ class MultiStrokeGestureTracker extends Observable<Point[]> {
         // Not enough points to make a meaningful estimation.
         return;
       }
-      // TODO: Interpolate points for each stroke and run the gesture recognition
-      const interpolatedPoints = DollarUtils.interpolateArray(this.points, 10);
+      const interpolatedPoints = this.interpolatePointsStrokeWise(this.points);
       this.notifyObservers(interpolatedPoints);
       this.reset();
     }, timeoutForContinueingGestureInSeconds * 1000);

@@ -43,7 +43,6 @@ class GestureToPlayerInputMapperService implements Observer<RecognizedGesture> {
   }
 
   public onData(data: RecognizedGesture): void {
-    // TODO: Add logging
     const playbackState = GestureResultToPlaybackState[data.gesture];
     this.setPlaybackState(playbackState);
   }
