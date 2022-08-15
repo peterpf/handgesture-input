@@ -1,4 +1,4 @@
-import { Observable } from "@/utils/observable";
+import { Observable, Observer } from "@/utils/observable";
 import { HandInput, RecognizedGesture } from "../types/types";
 import * as handPoseDetection from '@tensorflow-models/hand-pose-detection';
 import * as DollarUtils from "@/dollar/utils";
@@ -71,11 +71,31 @@ class GestureInputService extends Observable<RecognizedGesture> {
    */
   private hasAddedStrokeInPreviousCall: boolean = false;
 
+  private pinchingPointsObservers: Array<Observer<Point> & {reset: () => void}>;
+
   public constructor(videoStream: HTMLVideoElement) {
     super("gesture_input_service");
     this.videoStream = videoStream;
     this.recognizer = new Recognizer(predefinedGestures);
+    this.pinchingPointsObservers = [];
     this.init();
+  }
+
+  /**
+   * Register a new pinching-point observer.
+   * @param obs The observer to add.
+   */
+  public addPinchingPointObserver(obs: Observer<Point> & {reset: () => void}) {
+    this.pinchingPointsObservers.push(obs);
+  }
+
+  /**
+   * Call the `reset` method on each pinching point observer.
+   */
+  private notifyPinchingPointObserversAboutReset() {
+    for(let obs of this.pinchingPointsObservers) {
+      obs.reset();
+    }
   }
 
   /**
@@ -125,6 +145,9 @@ class GestureInputService extends Observable<RecognizedGesture> {
     this.hasAddedStrokeInPreviousCall = false;
     this.points = [];
     this.clearMultiStrokeGestureTimeout();
+
+    // Reset pinchingPoint observers
+    this.notifyPinchingPointObserversAboutReset()
   }
 
   /**
@@ -153,7 +176,7 @@ class GestureInputService extends Observable<RecognizedGesture> {
    * @param strokeId For multi-stroke gestures this id indicates the current stroke.
    * @returns The center point of the pinching gesture, otherwise undefined.
    */
-  private checkPinchingGesture(hand: Hand, strokeId: number): Point | undefined {
+  private checkPinchingPoint(hand: Hand, strokeId: number): Point | undefined {
     const indexFingerKeypoint = hand.keypoints[4];
     const thumbKeypoint = hand.keypoints[8];
 
@@ -166,8 +189,26 @@ class GestureInputService extends Observable<RecognizedGesture> {
     return undefined;
   }
 
+  /**
+   * Track the point as part of the current gesture and notify pinchingPoint observers.
+   * @param point Point to track.
+   */
+  private onPinchingPoint(point: Point) {
+    this.points.push(point);
 
-  private onHandGesture(hands: HandInput) {
+    // Notify observers
+    for(let obs of this.pinchingPointsObservers) {
+      obs.onData(point);
+    }
+  }
+
+  /**
+   * Callback method to handle hand-pose updates.
+   * Checks for a pinching-gesture (thumb and index finger are touching) of the right hand and forwards this to the multi-stroke-gesture recognizer.
+   * When the `multiStrokeGestureTimeout` runs out, reset the multi-stroke-gesture tracker.
+   * @param hands The hands object which contains the detected hands (or none).
+   */
+  private onHandGesture(hands: HandInput): void {
     // Find the right-hand for checking gestures.
     const primaryHand = hands.find(h => h.handedness === 'Right');
 
@@ -177,10 +218,7 @@ class GestureInputService extends Observable<RecognizedGesture> {
       return;
     }
 
-    // Restart the gesture timeout.
-    this.startMultiStrokeGestureTimeout();
-
-    const pinchingPoint = this.checkPinchingGesture(primaryHand, this.currentStrokeIndex);
+    const pinchingPoint = this.checkPinchingPoint(primaryHand, this.currentStrokeIndex);
     if (pinchingPoint == null) {
       // We are not pinching anymore, this could mean:
       // 1. we want to add another stroke,
@@ -190,7 +228,11 @@ class GestureInputService extends Observable<RecognizedGesture> {
         this.currentStrokeIndex++;
       }
     } else {
-      this.points.push(pinchingPoint);
+
+      // Restart the gesture timeout.
+      this.startMultiStrokeGestureTimeout();
+
+      this.onPinchingPoint(pinchingPoint);
       this.hasAddedStrokeInPreviousCall = true;
     }
   }

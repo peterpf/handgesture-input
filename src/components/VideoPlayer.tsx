@@ -30,5 +30,9 @@ class VideoPlayer extends React.Component<Props> {
       </video>
     );
   }
+
+  public getHtmlVideoElement() {
+    return this.videoElementRef.current;
+  }
 }
 export default VideoPlayer;
