@@ -46,7 +46,7 @@ class GestureInputService extends Observable<RecognizedGesture> implements Obser
 
   private multiStrokeGestureTracker: MultiStrokeGestureTracker;
 
-  private pinchingPointsObservers: Array<Observer<Point2D> & {reset: () => void}>;
+  private pinchingPointsObservers: Array<Observer<Point2D> & { reset: () => void }>;
 
   public constructor(videoStream: HTMLVideoElement) {
     super("gesture_input_service");
@@ -94,7 +94,7 @@ class GestureInputService extends Observable<RecognizedGesture> implements Obser
    * Register a new pinching-point observer.
    * @param obs The observer to add.
    */
-   public addPinchingPointObserver(obs: Observer<Point2D> & {reset: () => void}) {
+  public addPinchingPointObserver(obs: Observer<Point2D> & { reset: () => void }) {
     this.pinchingPointsObservers.push(obs);
   }
 
@@ -115,7 +115,7 @@ class GestureInputService extends Observable<RecognizedGesture> implements Obser
     if (distance <= thresholdForPinchingGesture) {
       const x = (indexFingerKeypoint.x + thumbKeypoint.x) / 2;
       const y = (indexFingerKeypoint.y + thumbKeypoint.y) / 2;
-      return {x, y};
+      return { x, y };
     }
     return undefined;
   }
@@ -125,7 +125,7 @@ class GestureInputService extends Observable<RecognizedGesture> implements Obser
    * @param point Point to track.
    */
   private notifyPinchingPointObservers(point: Point2D) {
-    for(let obs of this.pinchingPointsObservers) {
+    for (let obs of this.pinchingPointsObservers) {
       obs.onData(point);
     }
   }
@@ -136,7 +136,7 @@ class GestureInputService extends Observable<RecognizedGesture> implements Obser
    * - a gesture has been found
    */
   private notifyPinchingPointObserversAboutReset() {
-    for(let obs of this.pinchingPointsObservers) {
+    for (let obs of this.pinchingPointsObservers) {
       obs.reset();
     }
   }

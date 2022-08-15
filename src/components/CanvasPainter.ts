@@ -13,7 +13,7 @@ import VideoPlayer from "./VideoPlayer";
 const projectPoint = (canvas: HTMLCanvasElement, video: HTMLVideoElement, point: Point2D): Point2D => {
   const newX = (point.x / video.clientHeight) * canvas.clientWidth;
   const newY = (point.y / video.clientWidth) * canvas.clientWidth;
-  return {x: newX, y: newY};
+  return { x: newX, y: newY };
 }
 
 export class CanvasPainter implements Observer<Point2D> {

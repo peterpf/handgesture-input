@@ -34,7 +34,7 @@ class MultiStrokeGestureTracker extends Observable<Point[]> {
    */
   private multiStrokeGestureTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
-  public constructor(){
+  public constructor() {
     super("multi_stroke_gesture_tracker");
   }
 
