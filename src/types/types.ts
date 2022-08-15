@@ -23,3 +23,8 @@ export interface GestureHandler {
 export type HandInput = Array<Hand>;
 
 export type GestureProcessor = Observer<Point[]>
+
+export type Point2D = {
+  x: number;
+  y: number;
+}

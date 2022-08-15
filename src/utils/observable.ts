@@ -12,7 +12,7 @@ export interface Observer<T> {
 
 export class Observable<T> {
   private id: string;
-  private observers: Array<Observer<T>>;
+  protected observers: Array<Observer<T>>;
 
   constructor(id: string) {
     this.id = id;
