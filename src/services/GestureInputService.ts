@@ -72,7 +72,7 @@ class GestureInputService extends Observable<RecognizedGesture> {
   public constructor(videoStream: HTMLVideoElement) {
     super("gesture_input_service");
     this.videoStream = videoStream;
-    // TODO: Receive the array of gesture processors with the constructor arguments
+    this.recognizer = new Recognizer(predefinedGestures);
     this.gestureProcessors = [new PinchingGestureProcessor()];
   }
 
