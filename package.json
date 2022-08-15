@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@mediapipe/hands": "^0.4.1646424915",
+    "@mediapipe/pose": "^0.5.1635988162",
     "@tensorflow-models/coco-ssd": "^2.2.2",
     "@tensorflow-models/hand-pose-detection": "^2.0.0",
     "@tensorflow-models/mobilenet": "^2.1.0",

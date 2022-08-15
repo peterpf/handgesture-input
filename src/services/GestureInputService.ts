@@ -96,8 +96,8 @@ class GestureInputService extends Observable<RecognizedGesture> {
   public async init() {
     const detectorConfig: handPoseDetection.MediaPipeHandsMediaPipeModelConfig = {
       runtime: 'mediapipe',
-      // TODO: Replace with file from node_modules
-      solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands'
+      solutionPath: 'base/node_modules/@mediapipe/pose',
+      maxHands: 1
     };
     const model = handPoseDetection.SupportedModels.MediaPipeHands;
     this.detector = await handPoseDetection.createDetector(model, detectorConfig);

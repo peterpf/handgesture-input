@@ -4,6 +4,7 @@ specifiers:
   '@0x219/commitlint-config': 1.0.2
   '@commitlint/cli': 17.0.3
   '@mediapipe/hands': ^0.4.1646424915
+  '@mediapipe/pose': ^0.5.1635988162
   '@tensorflow-models/coco-ssd': ^2.2.2
   '@tensorflow-models/hand-pose-detection': ^2.0.0
   '@tensorflow-models/mobilenet': ^2.1.0
@@ -39,6 +40,7 @@ specifiers:
 
 dependencies:
   '@mediapipe/hands': 0.4.1646424915
+  '@mediapipe/pose': 0.5.1635988162
   '@tensorflow-models/coco-ssd': 2.2.2_64clqv444ndwypqxo7tn4b7aum
   '@tensorflow-models/hand-pose-detection': 2.0.0_izmolzruux3ambp4qrne6og4ze
   '@tensorflow-models/mobilenet': 2.1.0_64clqv444ndwypqxo7tn4b7aum
@@ -618,6 +620,10 @@ packages:
 
   /@mediapipe/hands/0.4.1646424915:
     resolution: {integrity: sha512-R1VM3DRCKTA49nVvkprInYUXx8cKisi86y6/9clvYA0vApmLqTjIHQFibJDHwSdy4Rykn2CjWywQAWw5+mGw8w==}
+    dev: false
+
+  /@mediapipe/pose/0.5.1635988162:
+    resolution: {integrity: sha512-t0dpl+iG/MTPtPPxEYHyVWo+X7G+qgYUYaB4y9pxavQRNzuQQeHeSmUnT+A8qOKnuB0ccxgyrrFmGUaaL0F3wQ==}
     dev: false
 
   /@nodelib/fs.scandir/2.1.5:
