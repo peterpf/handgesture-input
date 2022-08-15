@@ -1,13 +1,15 @@
 import { Observable } from "@/utils/observable";
-import PinchingGestureProcessor from "../gestures/PinchingGestureProcessor";
-import { Gesture, GestureProcessor, HandInput, RecognizedGesture } from "../types/types";
+import { HandInput, RecognizedGesture } from "../types/types";
 import * as handPoseDetection from '@tensorflow-models/hand-pose-detection';
 import * as DollarUtils from "@/dollar/utils";
+import { Point } from "@/dollar/types";
+import { Hand } from "@tensorflow-models/hand-pose-detection";
+import Recognizer from "@/dollar/recognizer";
+import { mapPredefinedGestureToGesture, predefinedGestures } from "./PredefinedGestures";
 import '@tensorflow/tfjs-core';
 // Register WebGL backend.
 import '@tensorflow/tfjs-backend-webgl';
 import '@mediapipe/hands';
-import { Point } from "@/dollar/types";
 
 //#region Utils
 const euclideanDistance = (p1: { x: number, y: number }, p2: { x: number, y: number }) => {
@@ -44,9 +46,9 @@ class GestureInputService extends Observable<RecognizedGesture> {
    */
   private videoStream: HTMLVideoElement;
   /**
-   * List of gesture processors which are notified when a new possible (multi-stroke) gesture is detected.
+   * The gesture recognizer which matches incoming point clouds to pre-defined gesture point-clouds.
    */
-  private gestureProcessors: Array<GestureProcessor>;
+  private recognizer: Recognizer;
   /**
    * Hand detection algorithm which extracts hand poses from the webcam feed.
    */
@@ -73,7 +75,7 @@ class GestureInputService extends Observable<RecognizedGesture> {
     super("gesture_input_service");
     this.videoStream = videoStream;
     this.recognizer = new Recognizer(predefinedGestures);
-    this.gestureProcessors = [new PinchingGestureProcessor()];
+    this.init();
   }
 
   /**
@@ -125,12 +127,6 @@ class GestureInputService extends Observable<RecognizedGesture> {
     this.clearMultiStrokeGestureTimeout();
   }
 
-  private notifyGestureProcessors(points: Point[]) {
-    for (let processor of this.gestureProcessors) {
-      processor.onData(points);
-    }
-  }
-
   /**
    * Start a timeout to allow a brief pause between strokes.
    * If the pause is not used for starting another draw, the points are reset.
@@ -143,29 +139,49 @@ class GestureInputService extends Observable<RecognizedGesture> {
         // Not enough points to make a meaningful estimation.
         return;
       }
-      // Interpolate points for each stroke and run the gesture processors
+      // Interpolate points for each stroke and run the gesture recognition
       const interpolatedPoints = DollarUtils.interpolateArray(this.points, 10);
-      this.notifyGestureProcessors(interpolatedPoints);
+      const gestureResult = this.recognizer.recognize(interpolatedPoints);
+      this.notifyObservers({ confidenceScore: gestureResult.score, gesture: mapPredefinedGestureToGesture(gestureResult.name) });
       this.reset();
     }, timeoutForContinueingGestureInSeconds * 1000);
   }
 
+  /**
+   * Checks for a pinching gesture and if applicable returns the center point.
+   * @param hand The hand to check pinching.
+   * @param strokeId For multi-stroke gestures this id indicates the current stroke.
+   * @returns The center point of the pinching gesture, otherwise undefined.
+   */
+  private checkPinchingGesture(hand: Hand, strokeId: number): Point | undefined {
+    const indexFingerKeypoint = hand.keypoints[4];
+    const thumbKeypoint = hand.keypoints[8];
+
+    const distance = euclideanDistance(indexFingerKeypoint, thumbKeypoint);
+    if (distance <= thresholdForPinchingGesture) {
+      const x = (indexFingerKeypoint.x + thumbKeypoint.x) / 2;
+      const y = (indexFingerKeypoint.y + thumbKeypoint.y) / 2;
+      return new Point(x, y, strokeId);
+    }
+    return undefined;
+  }
+
 
   private onHandGesture(hands: HandInput) {
-    // there are no points to add if there are no hands
-    if (hands.length === 0) {
+    // Find the right-hand for checking gestures.
+    const primaryHand = hands.find(h => h.handedness === 'Right');
+
+    // There are no points to add if there is no hand.
+    if (primaryHand == null) {
       this.hasAddedStrokeInPreviousCall = false;
       return;
     }
 
+    // Restart the gesture timeout.
     this.startMultiStrokeGestureTimeout();
 
-    const hand = hands[0]; // Take the first hand we can get
-    const indexFingerKeypoint = hand.keypoints[4];
-    const thumbKeypoint = hand.keypoints[8]
-
-    const distance = euclideanDistance(indexFingerKeypoint, thumbKeypoint);
-    if (distance > thresholdForPinchingGesture) {
+    const pinchingPoint = this.checkPinchingGesture(primaryHand, this.currentStrokeIndex);
+    if (pinchingPoint == null) {
       // We are not pinching anymore, this could mean:
       // 1. we want to add another stroke,
       // 2. or the gesture is complete.
@@ -173,16 +189,10 @@ class GestureInputService extends Observable<RecognizedGesture> {
         this.hasAddedStrokeInPreviousCall = false;
         this.currentStrokeIndex++;
       }
-      return;
+    } else {
+      this.points.push(pinchingPoint);
+      this.hasAddedStrokeInPreviousCall = true;
     }
-
-    // calculate center coordinates of pinching gesture
-    const x = (indexFingerKeypoint.x + thumbKeypoint.x) / 2;
-    const y = (indexFingerKeypoint.y + thumbKeypoint.y) / 2;
-    const pinchingPoint = new Point(x, y, this.currentStrokeIndex);
-
-    this.points.push(pinchingPoint);
-    this.hasAddedStrokeInPreviousCall = true;
   }
 }
 

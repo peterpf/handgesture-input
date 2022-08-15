@@ -16,18 +16,17 @@ const BBBStreamURL = "https://archive.org/serve/BigBuckBunny_328/BigBuckBunny_51
 const ContentView: React.FunctionComponent = () => {
   const webcamRef = React.createRef<Webcam>();
   const videoPlayerRef = React.createRef<VideoPlayer>();
-  const [gestureInputService, setGestureInputService] = React.useState<GestureInputService>();
-  const gestureToPlayerInputMapperService = React.createRef<GestureToPlayerInputMapperService>();
+  const gestureInputService = React.useRef<GestureInputService>();
+  const gestureToPlayerInputMapperService = React.useRef<GestureToPlayerInputMapperService>();
 
   useEffect(() => {
-    if (webcamRef.current?.video != null && videoPlayerRef.current != null && gestureInputService == null) {
+    if (webcamRef.current?.video != null && videoPlayerRef.current != null && gestureInputService.current == null) {
       const videoStream = webcamRef.current.video;
       const videoPlayer = videoPlayerRef.current;
-      const gestureToPlayerInputMapperService = new GestureToPlayerInputMapperService(videoPlayer);
+      gestureToPlayerInputMapperService.current = new GestureToPlayerInputMapperService(videoPlayer);
 
-      const service = new GestureInputService(videoStream);
-      service.addObserver(gestureToPlayerInputMapperService);
-      setGestureInputService(service);
+      gestureInputService.current = new GestureInputService(videoStream);
+      gestureInputService.current.addObserver(gestureToPlayerInputMapperService.current);
     }
   }, [webcamRef, videoPlayerRef]);
 
