@@ -14,7 +14,7 @@ const minPointsForGestureEstimation = 10; // avg 30 frames per second, a gesture
 /**
 * Time (seconds) between pinching gestures which still counts as one "big" gesture (multistroke gesture).
 */
-const timeoutForContinueingGestureInSeconds = 1.5;
+const timeoutForContinueingGestureInSeconds = 1;
 //#endregion
 
 class MultiStrokeGestureTracker extends Observable<Point[]> {
@@ -60,10 +60,10 @@ class MultiStrokeGestureTracker extends Observable<Point[]> {
   /**
    * Interpolate the points stroke wise.
    * @param points The points to interpolate.
-   * @param numInterpolationPoints The number of points to interpolate from the curve of a single stroke. The higher this value, the better the curve is reconstructed. Defaults to 10.
+   * @param numInterpolationPoints The number of points to interpolate from the curve of a single stroke. The higher this value, the better the curve is reconstructed. Defaults to 20.
    * @returns The stroke-wise interpolated points.
    */
-  private interpolatePointsStrokeWise(points: Point[], numInterpolationPoints = 10) {
+  private interpolatePointsStrokeWise(points: Point[], numInterpolationPoints = 20) {
     const interpolatedPoints: Point[] = []
     const strokeIds = [...new Set(points.map(p => p.strokeId))];
     for (let strokeId of strokeIds) {
