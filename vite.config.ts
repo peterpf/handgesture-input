@@ -28,6 +28,7 @@ export default defineConfig(({ command, mode }) => {
         },
       },
     },
+    publicDir: "node_modules/@mediapipe/hands"
   };
   return config;
 });

@@ -96,7 +96,7 @@ class GestureInputService extends Observable<RecognizedGesture> {
   public async init() {
     const detectorConfig: handPoseDetection.MediaPipeHandsMediaPipeModelConfig = {
       runtime: 'mediapipe',
-      solutionPath: 'base/node_modules/@mediapipe/pose',
+      solutionPath: '/', // ensure that 'base/node_modules/@mediapipe/hands' is defined as Vite's public folder
       maxHands: 1
     };
     const model = handPoseDetection.SupportedModels.MediaPipeHands;
