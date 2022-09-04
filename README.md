@@ -1,5 +1,7 @@
 # Implementation of using hand-gestures as input
 
+Accompanying blog post available [here](https://peterpf.dev/projects/control-video-player-with-hand-gestures/).
+
 ## Development
 
 ### Requirements
