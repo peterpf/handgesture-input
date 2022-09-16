@@ -11,8 +11,8 @@ import VideoPlayer from "./VideoPlayer";
  * @returns Projected point.
  */
 const projectPoint = (canvas: HTMLCanvasElement, video: HTMLVideoElement, point: Point2D): Point2D => {
-  const newX = (point.x / video.clientHeight) * canvas.height;
-  const newY = (point.y / video.clientWidth) * canvas.width;
+  const newX = (point.x / video.clientWidth) * canvas.width;
+  const newY = (point.y / video.clientHeight) * canvas.height;
   return { x: newX, y: newY };
 }
 
