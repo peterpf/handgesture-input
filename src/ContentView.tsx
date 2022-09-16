@@ -8,8 +8,20 @@ import GestureInputService from "./services/GestureInputService";
 import GestureToPlayerInputMapperService from "./services/GestureToPlayerMapperService";
 
 const StyledAppDiv = styled.div`
-  display: grid;
-  grid-template-columns: 50% auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const StyledCanvas = styled.canvas`
+  border: 1px solid gray;
+`;
+
+const StyledWebcamAndCanvasContainer = styled.div`
+  display: flex;
+  * {
+    flex: 1;
+  }
 `;
 
 const BBBStreamURL = "https://archive.org/serve/BigBuckBunny_328/BigBuckBunny_512kb.mp4";
@@ -50,9 +62,12 @@ const ContentView: React.FunctionComponent = () => {
 
   return (
     <StyledAppDiv>
-      <VideoPlayer ref={videoPlayerRef} mp4StreamURL={BBBStreamURL} />
-      <WebcamWrapper ref={webcamRef} />
-      <canvas ref={canvasRef} width={100} height={100}/>
+      <VideoPlayer ref={videoPlayerRef} mp4StreamURL={BBBStreamURL} width="500px" height="500px"/>
+      <p>Issue player commands by pinching the index finger and thumb and draw a play or pause symbol.</p>
+      <StyledWebcamAndCanvasContainer>
+        <WebcamWrapper ref={webcamRef} />
+        <StyledCanvas ref={canvasRef} />
+      </StyledWebcamAndCanvasContainer>
     </StyledAppDiv>
   );
 };

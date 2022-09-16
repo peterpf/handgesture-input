@@ -2,6 +2,8 @@ import React from "react";
 
 interface Props {
   readonly mp4StreamURL: string;
+  readonly width: string;
+  readonly height: string;
 }
 
 /**
@@ -25,7 +27,7 @@ class VideoPlayer extends React.Component<Props> {
   public render(): React.ReactNode {
     return (
       <video
-        ref={this.videoElementRef} width="100%" height="100%" muted controls>
+        ref={this.videoElementRef} width={this.props.width} height={this.props.height} muted controls>
         <source type="video/mp4" src={this.props.mp4StreamURL} />
       </video>
     );
