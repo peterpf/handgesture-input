@@ -7,6 +7,15 @@ Accompanying blog post available [here](https://peterpf.dev/projects/control-vid
 ### Requirements
 
 - `npm` and `pnpm` should be installed.
+- a webcam.
+
+### Setup
+
+Install the dependencies by running
+
+```bash
+pnpm install
+```
 
 ### Available scripts
 
@@ -26,7 +35,3 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.
 
 Your app is ready to be deployed.
-
-## Dependencies
-
-- [Tailwind](https://tailwindui.com/)
