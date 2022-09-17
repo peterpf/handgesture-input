@@ -2,6 +2,10 @@
 
 Accompanying blog post available [here](https://peterpf.dev/projects/control-video-player-with-hand-gestures/).
 
+<video width="320" height="240" controls>
+  <source src="./demo/demo.mov" type="video/mp4">
+</video>
+
 ## Development
 
 ### Requirements
