@@ -25,14 +25,14 @@
     "@tensorflow-models/coco-ssd": "^2.2.2",
     "@tensorflow-models/hand-pose-detection": "^2.0.0",
     "@tensorflow-models/mobilenet": "^2.1.0",
-    "@tensorflow/tfjs-backend-cpu": "^3.19.0",
-    "@tensorflow/tfjs-backend-webgl": "^3.19.0",
-    "@tensorflow/tfjs-core": "^3.19.0",
-    "@types/styled-components": "^5.1.25",
+    "@tensorflow/tfjs-backend-cpu": "^3.21.0",
+    "@tensorflow/tfjs-backend-webgl": "^3.21.0",
+    "@tensorflow/tfjs-core": "^3.21.0",
+    "@types/styled-components": "^5.1.26",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-webcam": "^7.0.1",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@0x219/commitlint-config": "1.0.2",
