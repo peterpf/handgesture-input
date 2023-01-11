@@ -4,6 +4,18 @@
 
 Accompanying blog post available [here](https://peterpf.dev/projects/control-video-player-with-hand-gestures/).
 
+## Usage
+
+Clone the repository and execute
+
+```bash
+pnpm install
+pnpm dev
+```
+
+This starts a local server accessible from localhost.
+Enable your webcam and use the **right hand** to draw symbols as shown in the GIF above.
+
 ## Development
 
 ### Requirements
